@@ -1,0 +1,8 @@
+[package]
+name = "ndarray-numtest"
+version = "0.1.0"
+authors = ["Toshiki Teramura <toshiki.teramura@gmail.com>"]
+
+[dependencies]
+ndarray = "0.7"
+float-cmp = "0.2"
