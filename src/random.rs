@@ -7,11 +7,11 @@ use ndarray_rand::RandomExt;
 use num_complex::Complex;
 use num_traits::Num;
 
-pub trait RandomExtNormal<S, D>: RandomExt<S, D>
-    where S: DataOwned,
+pub trait RandomExtNormal<A, S, D>: RandomExt<S, D>
+    where S: DataOwned<Elem = A>,
           D: Dimension
 {
-    fn random_normal<Sh>(shape: Sh, mean: S::Elem, variance: S::Elem) -> ArrayBase<S, D> where Sh: ShapeBuilder<Dim = D>;
+    fn random_normal<Sh>(shape: Sh, mean: A, variance: A) -> ArrayBase<S, D> where Sh: ShapeBuilder<Dim = D>;
 }
 
 pub trait RandomExtNormalComplex<A, S, D>: RandomExt<S, D>
@@ -28,7 +28,7 @@ pub trait RandomExtRange<S, D>: RandomExt<S, D>
     fn random_range<Sh, IdS>(shape: Sh, min: S::Elem, ma: S::Elem) -> ArrayBase<S, D> where Sh: ShapeBuilder<Dim = D>;
 }
 
-impl<A, S, D> RandomExtNormal<S, D> for ArrayBase<S, D>
+impl<A, S, D> RandomExtNormal<A, S, D> for ArrayBase<S, D>
     where S: DataOwned<Elem = A>,
           D: Dimension,
           A: From<f64> + Into<f64>
