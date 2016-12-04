@@ -22,5 +22,4 @@ fn random_complex() {
     let dist = ComplexNormal::<f32>::new(1.0, 0.0, 0.1, 0.2);
     let a = Array::random(5, dist);
     println!("a = \n{:?}", &a);
-    panic!("Manuall KILL");
 }
