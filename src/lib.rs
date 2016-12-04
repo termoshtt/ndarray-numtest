@@ -9,4 +9,3 @@ extern crate num_complex;
 pub mod prelude;
 pub mod assert;
 pub mod random;
-pub mod distributions;
