@@ -2,7 +2,7 @@
 use std::marker::PhantomData;
 use rand::Rng;
 use rand::distributions::*;
-use num_complex::Complex;
+use num::complex::Complex;
 
 #[derive(Clone, Copy)]
 pub struct NormalAny<A> {
