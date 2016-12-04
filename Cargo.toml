@@ -5,8 +5,9 @@ authors = ["Toshiki Teramura <toshiki.teramura@gmail.com>"]
 
 [dependencies]
 ndarray = "0.7"
-rand = "*"
-ndarray-rand = "*"
+rand = "0.3"
 float-cmp = "0.2"
-num-traits = "*"
-num-complex = "*"
+num-complex = "0.1.35"
+
+[dev-dependencies]
+ndarray-rand = "0.3"
