@@ -1,7 +1,7 @@
 
 use ndarray::prelude::*;
 use float_cmp::ApproxEqRatio;
-use num::complex::Complex;
+use num_complex::Complex;
 
 fn max<A: PartialOrd>(a: A, b: A) -> A {
     if a > b { a } else { b }
