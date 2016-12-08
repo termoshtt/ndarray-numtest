@@ -3,6 +3,12 @@ name = "ndarray-numtest"
 version = "0.1.0"
 authors = ["Toshiki Teramura <toshiki.teramura@gmail.com>"]
 
+description = "Linear algebra package for rust-ndarray using LAPACK"
+documentation = "https://docs.rs/ndarray-numtest/"
+repository = "https://github.com/termoshtt/ndarray-numtest"
+keywords = ["ndarray"]
+license = "MIT"
+
 [dependencies]
 ndarray = "0.7"
 rand = "0.3"
