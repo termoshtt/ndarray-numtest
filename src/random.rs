@@ -1,9 +1,11 @@
+//! Helper for random number generation
 
 use std::marker::PhantomData;
 use rand::Rng;
 use rand::distributions::*;
 use num_complex::Complex;
 
+/// Normal distribution for real numbers
 #[derive(Clone, Copy)]
 pub struct RealNormal<A> {
     dist: Normal,
@@ -41,6 +43,7 @@ impl IndependentSample<$float> for RealNormal<$float> {
 impl_RealNormal!(f64);
 impl_RealNormal!(f32);
 
+/// Normal distribution for complex numbers
 #[derive(Clone, Copy)]
 pub struct ComplexNormal<A> {
     re_dist: Normal,

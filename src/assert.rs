@@ -1,3 +1,4 @@
+//! Assertions for value and array
 
 use ndarray::prelude::*;
 use float_cmp::ApproxEqRatio;
@@ -7,6 +8,7 @@ fn max<A: PartialOrd>(a: A, b: A) -> A {
     if a > b { a } else { b }
 }
 
+/// test two values are close
 pub trait AssertClose: Sized + Copy {
     type Tol;
     fn assert_close(self, truth: Self, rtol: Self::Tol);
@@ -25,9 +27,7 @@ impl AssertClose for $scalar {
 impl AssertClose for Complex<$scalar> {
     type Tol = $scalar;
     fn assert_close(self, truth: Self, rtol: Self::Tol) {
-        let max_abs = max(self.norm(), truth.norm());
-        let diff_abs = (self - truth).norm();
-        if diff_abs / max_abs > rtol {
+        if !(self.re.approx_eq_ratio(&truth.re, rtol) && self.im.approx_eq_ratio(&truth.im, rtol)) {
             panic!("Not close: val={}, truth={}, rtol={}", self, truth, rtol);
         }
     }
@@ -36,9 +36,9 @@ impl AssertClose for Complex<$scalar> {
 impl_AssertClose!(f64);
 impl_AssertClose!(f32);
 
+/// test two arrays are close in maximum norm
 pub trait AssertAllClose: Sized {
     type Tol;
-    /// assert to check `test` and `truth` are close in maximum norm
     fn assert_allclose(&self, truth: &Self, rtol: Self::Tol);
 }
 
