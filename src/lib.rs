@@ -1,4 +1,4 @@
-//! This crate serves utilities for testing crates using rust-ndarray
+//! This is utility crate for testing crates using rust-ndarray
 //!
 //! Contents
 //! ----------
