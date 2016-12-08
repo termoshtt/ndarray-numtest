@@ -1,14 +1,44 @@
 
 extern crate ndarray;
-extern crate num;
+extern crate num_complex;
 extern crate ndarray_numtest;
 
 use ndarray::prelude::*;
 use ndarray_numtest::prelude::*;
-use num::complex::Complex;
+use num_complex::Complex;
 
 #[allow(non_camel_case_types)]
 type c64 = Complex<f64>;
+
+#[test]
+fn close_success() {
+    let a = 1.0;
+    let b = 1.0 + 1.0e-7;
+    a.assert_close(b, 1e-5);
+}
+
+#[should_panic]
+#[test]
+fn close_fail() {
+    let a = 1.0;
+    let b = 1.0 + 1.0e-5;
+    a.assert_close(b, 1e-7);
+}
+
+#[test]
+fn close32_success() {
+    let a = 1.0_f32;
+    let b = 1.0_f32 + 1.0e-7;
+    a.assert_close(b, 1e-5);
+}
+
+#[should_panic]
+#[test]
+fn close32_fail() {
+    let a = 1.0_f32;
+    let b = 1.0_f32 + 1.0e-2;
+    a.assert_close(b, 1.0e-3);
+}
 
 #[test]
 fn allclose_success() {
