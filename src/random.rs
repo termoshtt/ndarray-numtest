@@ -5,23 +5,23 @@ use rand::distributions::*;
 use num_complex::Complex;
 
 #[derive(Clone, Copy)]
-pub struct NormalAny<A> {
+pub struct RealNormal<A> {
     dist: Normal,
     phantom: PhantomData<A>,
 }
 
-impl<A> NormalAny<A> {
+impl<A> RealNormal<A> {
     pub fn new(center: f64, var: f64) -> Self {
-        NormalAny {
+        RealNormal {
             dist: Normal::new(center, var),
             phantom: PhantomData,
         }
     }
 }
 
-macro_rules! impl_NormalAny {
+macro_rules! impl_RealNormal {
     ($float:ty) => {
-impl Sample<$float> for NormalAny<$float> {
+impl Sample<$float> for RealNormal<$float> {
     fn sample<R>(&mut self, rng: &mut R) -> $float
         where R: Rng
     {
@@ -29,17 +29,17 @@ impl Sample<$float> for NormalAny<$float> {
     }
 }
 
-impl IndependentSample<$float> for NormalAny<$float> {
+impl IndependentSample<$float> for RealNormal<$float> {
     fn ind_sample<R>(&self, rng: &mut R) -> $float
         where R: Rng
     {
         self.dist.ind_sample(rng) as $float
     }
 }
-}} // impl_NormalAny
+}} // impl_RealNormal
 
-impl_NormalAny!(f64);
-impl_NormalAny!(f32);
+impl_RealNormal!(f64);
+impl_RealNormal!(f32);
 
 #[derive(Clone, Copy)]
 pub struct ComplexNormal<A> {

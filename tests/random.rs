@@ -9,9 +9,9 @@ use ndarray_numtest::prelude::*;
 
 #[test]
 fn random() {
-    let dist64 = NormalAny::<f64>::new(1.0, 0.1);
+    let dist64 = RealNormal::<f64>::new(1.0, 0.1);
     let a = Array::random(12, dist64);
-    let dist32 = NormalAny::<f32>::new(1.0, 0.1);
+    let dist32 = RealNormal::<f32>::new(1.0, 0.1);
     let b = Array::random((12, 3), dist32);
     println!("a = \n{:?}", &a);
     println!("b = \n{:?}", &b);
