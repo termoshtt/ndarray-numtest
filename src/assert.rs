@@ -44,6 +44,23 @@ pub trait AssertAllClose: Sized {
 
 macro_rules! impl_AssertAllClose {
     ($scalar:ty, $float:ty, $abs:ident, $th:expr) => {
+impl AssertAllClose for Vec<$scalar> {
+    type Tol = $float;
+    fn assert_allclose(&self, truth: &Self, rtol: Self::Tol) {
+        for (x, y) in self.iter().zip(truth.iter()) {
+            let max_abs = max(x.$abs(), y.$abs());
+            let diff_abs = (x - y).$abs();
+            let tol = if max_abs < $th {
+                diff_abs
+            } else {
+                diff_abs / max_abs
+            };
+            if tol > rtol {
+                panic!("Not close (rtol={}): \ntest = \n{:?}\nTruth = \n{:?}", rtol, self, truth);
+            }
+        }
+    }
+}
 impl<D: Dimension> AssertAllClose for Array<$scalar, D> {
     type Tol = $float;
     fn assert_allclose(&self, truth: &Self, rtol: Self::Tol) {
@@ -56,10 +73,7 @@ impl<D: Dimension> AssertAllClose for Array<$scalar, D> {
                 diff_abs / max_abs
             };
             if tol > rtol {
-                panic!("Not close (rtol={}): \ntest = \n{:?}\nTruth = \n{:?}",
-                       rtol,
-                       self,
-                       truth);
+                panic!("Not close (rtol={}): \ntest = \n{:?}\nTruth = \n{:?}", rtol, self, truth);
             }
         }
     }

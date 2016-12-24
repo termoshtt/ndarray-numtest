@@ -47,11 +47,26 @@ fn allclose_success() {
     b.assert_allclose(&a, 1e-7);
 }
 
+#[test]
+fn allclose_vec_success() {
+    let a = vec![1.0, 2.0];
+    let b = vec![1.0, 2.0 + 1.0e-9];
+    b.assert_allclose(&a, 1e-7);
+}
+
 #[should_panic]
 #[test]
 fn allclose_fail() {
     let a = arr1(&[1.0, 2.0]);
     let b = arr1(&[1.0, 2.0 + 1.0e-3]);
+    b.assert_allclose(&a, 1e-7);
+}
+
+#[should_panic]
+#[test]
+fn allclose_vec_fail() {
+    let a = vec![1.0, 2.0];
+    let b = vec![1.0, 2.0 + 1.0e-3];
     b.assert_allclose(&a, 1e-7);
 }
 
