@@ -1,14 +1,9 @@
 //! Assertions for value and array
 
-use ndarray::prelude::*;
 use float_cmp::ApproxEqRatio;
 use num_complex::Complex;
 
-fn max<A: PartialOrd>(a: A, b: A) -> A {
-    if a > b { a } else { b }
-}
-
-/// test two values are close
+/// test two values are close in relative tolerance sense
 pub trait AssertClose: Sized + Copy {
     type Tol;
     fn assert_close(self, truth: Self, rtol: Self::Tol);
@@ -36,51 +31,40 @@ impl AssertClose for Complex<$scalar> {
 impl_AssertClose!(f64);
 impl_AssertClose!(f32);
 
-/// test two arrays are close in maximum norm
-pub trait AssertAllClose: Sized {
+/// test two arrays are close
+pub trait AssertAllClose {
     type Tol;
-    fn assert_allclose(&self, truth: &Self, rtol: Self::Tol);
+    /// test two arrays are close in L2-norm with relative tolerance
+    fn assert_allclose_l2(&self, truth: &Self, rtol: Self::Tol);
+    /// test two arrays are close in inf-norm with absolute tolerance
+    fn assert_allclose_inf(&self, truth: &Self, atol: Self::Tol);
 }
 
 macro_rules! impl_AssertAllClose {
-    ($scalar:ty, $float:ty, $abs:ident, $th:expr) => {
-impl AssertAllClose for Vec<$scalar> {
+    ($scalar:ty, $float:ty, $abs:ident) => {
+impl AssertAllClose for [$scalar]{
     type Tol = $float;
-    fn assert_allclose(&self, truth: &Self, rtol: Self::Tol) {
+    fn assert_allclose_inf(&self, truth: &Self, atol: Self::Tol) {
         for (x, y) in self.iter().zip(truth.iter()) {
-            let max_abs = max(x.$abs(), y.$abs());
-            let diff_abs = (x - y).$abs();
-            let tol = if max_abs < $th {
-                diff_abs
-            } else {
-                diff_abs / max_abs
-            };
-            if tol > rtol {
-                panic!("Not close (rtol={}): \ntest = \n{:?}\nTruth = \n{:?}", rtol, self, truth);
+            let tol = (x - y).$abs();
+            if tol > atol {
+                panic!("Not close in inf-norm (atol={}): \ntest = \n{:?}\nTruth = \n{:?}",
+                       atol, self, truth);
             }
         }
     }
-}
-impl<D: Dimension> AssertAllClose for Array<$scalar, D> {
-    type Tol = $float;
-    fn assert_allclose(&self, truth: &Self, rtol: Self::Tol) {
-        for (x, y) in self.iter().zip(truth.iter()) {
-            let max_abs = max(x.$abs(), y.$abs());
-            let diff_abs = (x - y).$abs();
-            let tol = if max_abs < $th {
-                diff_abs
-            } else {
-                diff_abs / max_abs
-            };
-            if tol > rtol {
-                panic!("Not close (rtol={}): \ntest = \n{:?}\nTruth = \n{:?}", rtol, self, truth);
-            }
+    fn assert_allclose_l2(&self, truth: &Self, rtol: Self::Tol) {
+        let nrm: Self::Tol = truth.iter().map(|x| x.$abs().powi(2)).sum();
+        let dev: Self::Tol = self.iter().zip(truth.iter()).map(|(x, y)| (x-y).$abs()).sum();
+        if dev / nrm > rtol {
+            panic!("Not close in L2-norm (rtol={}): \ntest = \n{:?}\nTruth = \n{:?}",
+                   rtol, self, truth);
         }
     }
 }
 }} // impl_AssertAllClose
 
-impl_AssertAllClose!(f64, f64, abs, 1.0e-7);
-impl_AssertAllClose!(f32, f32, abs, 1.0e-3);
-impl_AssertAllClose!(Complex<f64>, f64, norm, 1.0e-7);
-impl_AssertAllClose!(Complex<f32>, f32, norm, 1.0e-3);
+impl_AssertAllClose!(f64, f64, abs);
+impl_AssertAllClose!(f32, f32, abs);
+impl_AssertAllClose!(Complex<f64>, f64, norm);
+impl_AssertAllClose!(Complex<f32>, f32, norm);
