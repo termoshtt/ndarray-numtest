@@ -1,5 +1,6 @@
 //! Assertions for value and array
 
+use ndarray::prelude::*;
 use float_cmp::ApproxEqRatio;
 use num_complex::Complex;
 
@@ -55,11 +56,33 @@ impl AssertAllClose for [$scalar]{
     }
     fn assert_allclose_l2(&self, truth: &Self, rtol: Self::Tol) {
         let nrm: Self::Tol = truth.iter().map(|x| x.$abs().powi(2)).sum();
-        let dev: Self::Tol = self.iter().zip(truth.iter()).map(|(x, y)| (x-y).$abs()).sum();
-        if dev / nrm > rtol {
+        let dev: Self::Tol = self.iter().zip(truth.iter()).map(|(x, y)| (x-y).$abs().powi(2)).sum();
+        if dev / nrm > rtol.powi(2) {
             panic!("Not close in L2-norm (rtol={}): \ntest = \n{:?}\nTruth = \n{:?}",
                    rtol, self, truth);
         }
+    }
+}
+
+impl AssertAllClose for Vec<$scalar> {
+    type Tol = $float;
+    fn assert_allclose_inf(&self, truth: &Self, atol: Self::Tol) {
+        self.as_slice().assert_allclose_inf(&truth, atol);
+    }
+    fn assert_allclose_l2(&self, truth: &Self, rtol: Self::Tol) {
+        self.as_slice().assert_allclose_l2(&truth, rtol);
+    }
+}
+
+impl<D:Dimension> AssertAllClose for Array<$scalar, D> {
+    type Tol = $float;
+    fn assert_allclose_inf(&self, truth: &Self, atol: Self::Tol) {
+        self.as_slice().unwrap().assert_allclose_inf(
+            truth.as_slice().unwrap(), atol);
+    }
+    fn assert_allclose_l2(&self, truth: &Self, rtol: Self::Tol) {
+        self.as_slice().unwrap().assert_allclose_l2(
+            truth.as_slice().unwrap(), rtol);
     }
 }
 }} // impl_AssertAllClose

@@ -44,14 +44,14 @@ fn close32_fail() {
 fn allclose_success() {
     let a = arr1(&[1.0, 2.0]);
     let b = arr1(&[1.0, 2.0 + 1.0e-9]);
-    b.assert_allclose(&a, 1e-7);
+    b.assert_allclose_l2(&a, 1e-7);
 }
 
 #[test]
 fn allclose_vec_success() {
     let a = vec![1.0, 2.0];
     let b = vec![1.0, 2.0 + 1.0e-9];
-    b.assert_allclose(&a, 1e-7);
+    b.assert_allclose_l2(&a, 1e-7);
 }
 
 #[should_panic]
@@ -59,7 +59,7 @@ fn allclose_vec_success() {
 fn allclose_fail() {
     let a = arr1(&[1.0, 2.0]);
     let b = arr1(&[1.0, 2.0 + 1.0e-3]);
-    b.assert_allclose(&a, 1e-7);
+    b.assert_allclose_l2(&a, 1e-7);
 }
 
 #[should_panic]
@@ -67,14 +67,14 @@ fn allclose_fail() {
 fn allclose_vec_fail() {
     let a = vec![1.0, 2.0];
     let b = vec![1.0, 2.0 + 1.0e-3];
-    b.assert_allclose(&a, 1e-7);
+    b.assert_allclose_l2(&a, 1e-7);
 }
 
 #[test]
 fn allclose_success_complex() {
     let a = arr1(&[c64::new(1.0, 1.1), c64::new(1.0, 1.1)]);
     let b = arr1(&[c64::new(1.0, 1.1 + 1.0e-9), c64::new(1.0, 1.1)]);
-    b.assert_allclose(&a, 1e-7);
+    b.assert_allclose_l2(&a, 1e-7);
 }
 
 #[should_panic]
@@ -82,5 +82,5 @@ fn allclose_success_complex() {
 fn allclose_success_fail() {
     let a = arr1(&[c64::new(1.0, 1.1), c64::new(1.0, 1.1)]);
     let b = arr1(&[c64::new(1.0, 1.1 + 1.0e-3), c64::new(1.0, 1.1)]);
-    b.assert_allclose(&a, 1e-7);
+    b.assert_allclose_l2(&a, 1e-7);
 }
