@@ -23,3 +23,11 @@ fn random_complex() {
     let a = Array::random(5, dist);
     println!("a = \n{:?}", &a);
 }
+
+#[test]
+fn random_init() {
+    let a = Array::<f64, _>::real_normal_init((3, 4), 0.0, 1.0);
+    let b = Array::<f32, _>::real_normal_init((3, 4), 0.0, 1.0);
+    println!("a = \n{:?}", &a);
+    println!("b = \n{:?}", &b);
+}

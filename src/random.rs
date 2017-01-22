@@ -73,8 +73,7 @@ impl Sample<Complex<$float>> for ComplexNormal<$float> {
     }
 }
 
-impl IndependentSample<Complex<$float>> for ComplexNormal<$float>
-{
+impl IndependentSample<Complex<$float>> for ComplexNormal<$float> {
     fn ind_sample<R>(&self, rng: &mut R) -> Complex<$float>
         where R: Rng
     {
