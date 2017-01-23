@@ -84,3 +84,17 @@ fn allclose_success_fail() {
     let b = arr1(&[c64::new(1.0, 1.1 + 1.0e-3), c64::new(1.0, 1.1)]);
     b.assert_allclose_l2(&a, 1e-7);
 }
+
+#[test]
+fn allclose2d() {
+    let a = arr2(&[[1.0, 0.0], [0.0, 1.0]]);
+    let b = arr2(&[[0.0, 1.0e-9], [1.0e-9, 0.0]]) + &a;
+    b.assert_allclose_l2(&a, 1e-7);
+}
+
+#[test]
+fn allclose2d_t() {
+    let a = arr2(&[[1.0, 0.0], [0.0, 1.0]]).reversed_axes();
+    let b = arr2(&[[0.0, 1.0e-9], [1.0e-9, 0.0]]) + &a;
+    b.assert_allclose_l2(&a, 1e-7);
+}
