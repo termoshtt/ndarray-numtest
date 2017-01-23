@@ -1,6 +1,6 @@
 //! Assertions for value and array
 
-use ndarray::prelude::*;
+use ndarray::{Array, Dimension, IntoDimension};
 use float_cmp::ApproxEqRatio;
 use num_complex::Complex;
 
@@ -74,15 +74,31 @@ impl AssertAllClose for Vec<$scalar> {
     }
 }
 
-impl<D:Dimension> AssertAllClose for Array<$scalar, D> {
+impl<D: Dimension> AssertAllClose for Array<$scalar, D> {
     type Tol = $float;
     fn assert_allclose_inf(&self, truth: &Self, atol: Self::Tol) {
-        self.as_slice().unwrap().assert_allclose_inf(
-            truth.as_slice().unwrap(), atol);
+        if self.shape() != truth.shape() {
+            panic!("Shape missmatch: self={:?}, truth={:?}", self.shape(), truth.shape());
+        }
+        for (idx, val) in self.indexed_iter() {
+            let t = truth[idx.into_dimension()];
+            let tol = (*val - t).$abs();
+            if tol > atol {
+                panic!("Not close in inf-norm (atol={}): \ntest = \n{:?}\nTruth = \n{:?}",
+                       atol, self, truth);
+            }
+        }
     }
     fn assert_allclose_l2(&self, truth: &Self, rtol: Self::Tol) {
-        self.as_slice().unwrap().assert_allclose_l2(
-            truth.as_slice().unwrap(), rtol);
+        if self.shape() != truth.shape() {
+            panic!("Shape missmatch: self={:?}, truth={:?}", self.shape(), truth.shape());
+        }
+        let nrm: Self::Tol = truth.iter().map(|x| x.$abs().powi(2)).sum();
+        let dev: Self::Tol = self.indexed_iter().map(|(idx, val)| (truth[idx.into_dimension()] - val).$abs().powi(2)).sum();
+        if dev / nrm > rtol.powi(2) {
+            panic!("Not close in L2-norm (rtol={}): \ntest = \n{:?}\nTruth = \n{:?}",
+                   rtol, self, truth);
+        }
     }
 }
 }} // impl_AssertAllClose
